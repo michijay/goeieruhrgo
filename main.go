@@ -37,7 +37,7 @@ func playAlarm() {
 
 func main() {
 
-	Version := "1.0-0"
+	Version := "1.1-3"
 
 	titel := fmt.Sprintf("GoEieruhrGo - V: %s", Version)
 
