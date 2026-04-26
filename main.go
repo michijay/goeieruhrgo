@@ -7,12 +7,33 @@ package main
 import (
 	"fmt"
 	"time"
+	"os/exec"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 )
+
+func playAlarm() {
+	// 1. Priorität: VLC (kann fast alles)
+	if _, err := exec.LookPath("cvlc"); err == nil {
+		exec.Command("cvlc", "--play-and-exit", "/usr/share/sounds/freedesktop/stereo/complete.oga").Run()
+		return
+	}
+
+	// 2. Priorität: Pipewire (moderner Standard)
+	if _, err := exec.LookPath("pw-play"); err == nil {
+		exec.Command("pw-play", "/usr/share/sounds/freedesktop/stereo/complete.oga").Run()
+		return
+	}
+
+	// 3. Priorität: ALSA (Das Urgestein - nur für .wav!)
+	if _, err := exec.LookPath("aplay"); err == nil {
+		exec.Command("aplay", "/usr/share/sounds/alsa/Front_Center.wav").Run()
+		return
+	}
+}
 
 func main() {
 
@@ -35,6 +56,7 @@ func main() {
 		mins := seconds / 60
 		secs := seconds % 60
 		label.SetText(fmt.Sprintf("%02d:%02d", mins, secs))
+		label.Refresh()
 	}
 
 	startBtn := widget.NewButton("Start", func() {
@@ -62,8 +84,24 @@ func main() {
 				}
 			}
 			running = false
-			label.SetText("DONE!")
-			// later: audio notify
+			//label.SetText("DONE!")
+
+			go func() {
+                playAlarm()
+                time.Sleep(1 * time.Second)
+                playAlarm()
+            }()
+
+			go func() {
+                for i := 0; i < 4; i++ {
+                    label.Hide()
+                    time.Sleep(250 * time.Millisecond)
+                    label.Show()
+                    time.Sleep(250 * time.Millisecond)
+                }
+                label.SetText("DONE!")
+            }()
+
 		}()
 	})
 
