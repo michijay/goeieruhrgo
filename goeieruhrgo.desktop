@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=GoEieruhrGo
+Comment=Einfacher Timer in Go geschrieben
+Exec=/opt/goeieruhrgo/goeieruhrgo
+Path=/opt/goeieruhrgo/
+Icon=/opt/goeieruhrgo/goeieruhrgo.png
+Terminal=false
+Categories=Utility;Clock;
